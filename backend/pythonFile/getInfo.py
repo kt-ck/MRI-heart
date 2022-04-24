@@ -2,25 +2,40 @@ import pydicom
 import sys
 import cv2 as cv
 import json
-dicom = sys.argv[1]
+import os
+import pylab
 
-ds = pydicom.dcmread("uploads/{}".format(dicom))
+project = sys.argv[1]
+project_dir = "uploads/{}/".format(project)
+img_save_path = "public/images/dicom_img/{}/".format(project)
+json_save_path = "json/{}/".format(project)
+if not os.path.exists(img_save_path):
+    os.mkdir(img_save_path)
 
-img = ds.pixel_array
-img_bgr = cv.cvtColor(img, cv.COLOR_RGB2BGR)
-cv.imwrite("public/images/dicom_img/{}.png".format(dicom), img_bgr)
+if not os.path.exists(json_save_path):
+    os.mkdir(json_save_path)
 
-height, width = img.shape[:2]
-data = {
-    "height": height,
-    "width": width,
-    "filename": dicom,
-    "PhysicalDelta": list(ds[0x0028, 0x0030].value)
-}
+for dicom_full in os.listdir(project_dir):
+    dicom = dicom_full.split(".")[0]
+    ds = pydicom.dcmread(project_dir + dicom_full)
 
-data_string = json.dumps(data)
+    img = ds.pixel_array
+    # img_bgr = cv.cvtColor(img, cv.COLOR_RGB2BGR)
 
-with open("json/{}.json".format(dicom), 'w') as f:
-    json.dump(data_string, f)
+    pylab.imsave(img_save_path + "{}.png".format(dicom),
+                 img, cmap=pylab.cm.bone)
 
-print("success")
+    height, width = img.shape[:2]
+    data = {
+        "height": height,
+        "width": width,
+        "filename": dicom,
+        "PhysicalDelta": list(ds[0x0028, 0x0030].value)
+    }
+
+    data_string = json.dumps(data)
+
+    with open(json_save_path + "{}.json".format(dicom), 'w') as f:
+        json.dump(data_string, f)
+
+    print("success")
