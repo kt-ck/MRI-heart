@@ -1,0 +1,7 @@
+.filter-bright{
+    filter: invert(64%) sepia(35%) saturate(6871%) hue-rotate(157deg) brightness(89%) contrast(102%);
+}
+
+.filter-dark{
+    filter: invert(100%) sepia(0%) saturate(7480%) hue-rotate(37deg) brightness(105%) contrast(105%);
+}
