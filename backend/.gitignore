@@ -1,5 +1,5 @@
 node_modules
-/*.json
-/*.dcm
-/*.png
+json/**
+public/images/dicom_img/**
+uploads/**
 

@@ -1,14 +1,20 @@
 import { message, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { setProjectName, setDicomlist } from "../features/global/globalSlice";
+import {
+  setProjectName,
+  setDicomlist,
+  setDicomSrc,
+  setDicomInfo,
+} from "../features/global/globalSlice";
 function DropDownItem({ item, btnClick }) {
   const api = useSelector((state) => state.mode.api);
+  const host = useSelector((state) => state.global.host);
   const dispatch = useDispatch();
   const uploadDicom = (e) => {
     const form = new FormData();
     const files = document.querySelector("#dicomInput").files;
-    console.log(files);
+
     for (let i = 0; i < files.length; ++i) {
       form.append("files[]", files[i]);
     }
@@ -24,6 +30,15 @@ function DropDownItem({ item, btnClick }) {
           message.success(`${res.data.dirname} create successfully`);
           dispatch(setProjectName(res.data.dirname));
           dispatch(setDicomlist(res.data.filelist));
+          // console.log(res.data);
+          let firstData = JSON.parse(JSON.parse(res.data.firstData));
+          console.log(firstData, typeof firstData);
+          dispatch(
+            setDicomSrc(
+              `${host}images/dicom_img/${res.data.dirname}/${firstData["filename"]}.png`
+            )
+          );
+          dispatch(setDicomInfo(firstData));
           console.log(res.data);
         }
       })

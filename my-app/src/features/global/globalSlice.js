@@ -10,7 +10,7 @@ export const globalSlice = createSlice({
     menuHeight: 30,
     sidebarWidth: 64,
     toolboxWidth: 400,
-    projectname: "undefined",
+    projectname: "",
     dicomlist: [],
   },
   reducers: {
