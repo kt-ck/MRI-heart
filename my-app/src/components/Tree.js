@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DownSquareOutlined, RightSquareOutlined } from "@ant-design/icons";
-function Tree({ projectName, filenameList }) {
+function Tree({ projectName, filenameList, activeIndex }) {
   const [show, setShow] = useState(false);
   return (
     <div className="w-full dark:text-slate-100 px-2 flow-root">
@@ -10,8 +10,17 @@ function Tree({ projectName, filenameList }) {
       </div>
       <div className="w-full ml-2 pl-2 border-l-2 border-l-slate-800 dark:border-l-slate-400 ">
         {show &&
-          filenameList.map((item) => (
-            <div key={item.filename}>{item.filename}</div>
+          filenameList.map((item, index) => (
+            <div
+              className={
+                activeIndex === index
+                  ? "border-l-4 border-l-purple-600 "
+                  : undefined
+              }
+              key={item.filename}
+            >
+              {item.filename}
+            </div>
           ))}
       </div>
     </div>

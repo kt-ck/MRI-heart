@@ -4,12 +4,10 @@ import axios from "axios";
 import {
   setProjectName,
   setDicomlist,
-  setDicomSrc,
   setDicomInfo,
 } from "../features/global/globalSlice";
-function DropDownItem({ item, btnClick }) {
-  const api = useSelector((state) => state.mode.api);
-  const host = useSelector((state) => state.global.host);
+function DropDownItem({ item }) {
+  const api = useSelector((state) => state.global.api);
   const dispatch = useDispatch();
   const uploadDicom = (e) => {
     const form = new FormData();
@@ -33,11 +31,7 @@ function DropDownItem({ item, btnClick }) {
           // console.log(res.data);
           let firstData = JSON.parse(JSON.parse(res.data.firstData));
           console.log(firstData, typeof firstData);
-          dispatch(
-            setDicomSrc(
-              `${host}images/dicom_img/${res.data.dirname}/${firstData["filename"]}.png`
-            )
-          );
+
           dispatch(setDicomInfo(firstData));
           console.log(res.data);
         }
@@ -63,11 +57,7 @@ function DropDownItem({ item, btnClick }) {
       </div>
     );
   }
-  return (
-    <Button type="text" onClick={(e) => btnClick(e, item.id, item.callback)}>
-      {item.label}
-    </Button>
-  );
+  return <Button type="text">{item.label}</Button>;
 }
 
 export default DropDownItem;

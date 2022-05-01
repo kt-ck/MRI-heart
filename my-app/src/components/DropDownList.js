@@ -1,22 +1,15 @@
 import { Menu } from "antd";
 import DropDownItem from "./DropDownItem";
-function DropDownList({list}) {
-  const btnClick = (e, id, callback) => {
-      if(id === "open file" && callback === "uploadDicomFile"){
-          
-      }
-  }
+function DropDownList({ list }) {
   return (
     <Menu>
-        {
-            list.map((item)=>(
-                <Menu.Item key="item.id">
-                    <DropDownItem item={item} btnClick={btnClick}/>
-                </Menu.Item>
-            ))
-        }
+      {list.map((item) => (
+        <Menu.Item key="item.id">
+          <DropDownItem item={item} />
+        </Menu.Item>
+      ))}
     </Menu>
-  )
+  );
 }
 
-export default DropDownList
+export default DropDownList;

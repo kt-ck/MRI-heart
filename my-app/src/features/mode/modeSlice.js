@@ -1,19 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 export const modeSlice = createSlice({
-  name: 'mode',
+  name: "mode",
   initialState: {
     mode: 0,
-    api: 'http://localhost:3000/api/'
   },
   reducers: {
     change: (state) => {
-        state.mode = 1 - state.mode
-    }
+      state.mode = 1 - state.mode;
+    },
   },
-})
+});
 
 // Action creators are generated for each case reducer function
-export const { change } = modeSlice.actions
+export const { change } = modeSlice.actions;
 
-export default modeSlice.reducer
+export default modeSlice.reducer;
