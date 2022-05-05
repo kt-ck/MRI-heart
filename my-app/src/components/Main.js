@@ -2,16 +2,6 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setToolboxActiveIndex } from "../features/toolbox/currentFileSysSlice";
 function Main({ width, height }) {
-  //useState
-  const [mainWidth, setMainWidth] = useState(500);
-  const [mainHeight, setMainHeight] = useState(500);
-  const [ctx, setCtx] = useState({});
-  const [mouseDownInfo, setMouseDownInfo] = useState({});
-  const [isDown, setIsDown] = useState(false);
-  const [cvs, setCvs] = useState({});
-  const [line, setLine] = useState([]);
-  const [dicomShowIndex, setDicomShowIndex] = useState(0);
-
   // useSelector
   const dicomInfo = useSelector((state) => state.global.dicomInfo);
   const dicom_list = useSelector((state) => state.global.dicomlist);
@@ -24,6 +14,18 @@ function Main({ width, height }) {
     (state) => state.currentFileSys.toolboxActiveIndex
   );
 
+  //useState
+  const [mainWidth, setMainWidth] = useState(500);
+  const [mainHeight, setMainHeight] = useState(500);
+  const [operCtx, setOperCtx] = useState({});
+  const [operCvs, setOperCvs] = useState({});
+  const [imgCtx, setImgCtx] = useState({});
+  const [imgCvs, setImgCvs] = useState({});
+  const [mouseDownInfo, setMouseDownInfo] = useState({});
+  const [isDown, setIsDown] = useState(false);
+  const [line, setLine] = useState([]);
+  const [dicomShowIndex, setDicomShowIndex] = useState(0);
+
   //const data
   const x_del = Math.round((width - mainWidth) / 2) + sidebarWidth;
   const y_del = Math.round((height - mainHeight) / 2) + menuHeight;
@@ -35,7 +37,9 @@ function Main({ width, height }) {
     let img = new Image();
     img.src = imgSrc;
     img.onload = () => {
-      ctx.drawImage(
+      setMainWidth(dicomInfo.width);
+      setMainHeight(dicomInfo.height);
+      imgCtx.drawImage(
         img,
         Math.round((mainWidth - dicomInfo.width) / 2),
         Math.round((mainHeight - dicomInfo.height) / 2),
@@ -50,39 +54,43 @@ function Main({ width, height }) {
       fileobj["filename"].split(".")[0]
     }.png`;
 
-  const zoomCanvas = (e) => {
-    if (e.deltaY < 0 && mainHeight + 30 < height && mainWidth + 30 < width) {
-      setMainHeight(mainHeight + 30);
-      setMainWidth(mainWidth + 30);
-    } else if (e.deltaY > 0 && mainHeight - 30 > 100 && mainWidth - 30 > 100) {
-      setMainHeight(mainHeight - 30);
-      setMainWidth(mainWidth - 30);
-    }
-  };
-  const setCanvasEmpty = () => {
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
-    ctx.fillStyle = "#e2e8f0";
-    ctx.fillRect(0, 0, cvs.width, cvs.height);
+  // const zoomCanvas = (e) => {
+  //   if (e.deltaY < 0 && mainHeight + 30 < height && mainWidth + 30 < width) {
+  //     setMainHeight(mainHeight + 30);
+  //     setMainWidth(mainWidth + 30);
+  //   } else if (e.deltaY > 0 && mainHeight - 30 > 100 && mainWidth - 30 > 100) {
+  //     setMainHeight(mainHeight - 30);
+  //     setMainWidth(mainWidth - 30);
+  //   }
+  // };
+  const setOperCanvasEmpty = () => {
+    operCtx.clearRect(0, 0, operCvs.width, operCvs.height);
   };
 
   // useEffect
   useEffect(() => {
-    let canvas = document.querySelector("#canvas");
-    let tctx = canvas.getContext("2d");
-    tctx.fillStyle = "#e2e8f0";
-    tctx.fillRect(0, 0, canvas.width, canvas.height);
-    setCtx(tctx);
-    setCvs(canvas);
-  }, [mainHeight, mainWidth]);
+    //初始化operCvs、operCtx, imgCvs, imgCtx
+    let operCvs = document.querySelector("#operCanvas");
+    let operCtx = operCvs.getContext("2d");
+    let imgCvs = document.querySelector("#imgCanvas");
+    let imgCtx = imgCvs.getContext("2d");
+    imgCtx.fillStyle = "#e2e8f0";
+    imgCtx.fillRect(0, 0, imgCvs.width, imgCvs.height);
+    setOperCvs(operCvs);
+    setOperCtx(operCtx);
+    setImgCvs(imgCvs);
+    setImgCtx(imgCtx);
+  }, []);
 
   useEffect(() => {
+    //初始化要操作的图片
     if (dicom_list.length > 0) {
-      setCanvasEmpty();
-      showImgOnCanvas(getUrlFromDicomObj(dicom_list[dicomShowIndex]));
+      setOperCanvasEmpty();
+      showImgOnCanvas(getUrlFromDicomObj(dicom_list[0]));
       dispatch(setToolboxActiveIndex(0));
       setDicomShowIndex(0);
     }
-  }, [mainHeight, mainWidth, ctx, dicom_list]);
+  }, [mainWidth, mainHeight, dicom_list]);
 
   // canvas listener handler
   const contextMenu = (e) => {
@@ -107,8 +115,8 @@ function Main({ width, height }) {
       ) {
         //单击canvas某处
         if (mouseDownInfo.buttons === 1) {
-          ctx.fillStyle = "#08f2e5";
-          ctx.fillRect(
+          operCtx.fillStyle = "#08f2e5";
+          operCtx.fillRect(
             mouseDownInfo.clientX - x_del,
             mouseDownInfo.clientY - y_del,
             1,
@@ -116,11 +124,11 @@ function Main({ width, height }) {
           );
           if (line.length % 2 === 1) {
             let point = line[line.length - 1];
-            ctx.strokeStyle = "#08f2e5";
-            ctx.beginPath();
-            ctx.moveTo(point[0] - x_del, point[1] - y_del);
-            ctx.lineTo(e.clientX - x_del, e.clientY - y_del);
-            ctx.stroke();
+            operCtx.strokeStyle = "#08f2e5";
+            operCtx.beginPath();
+            operCtx.moveTo(point[0] - x_del, point[1] - y_del);
+            operCtx.lineTo(e.clientX - x_del, e.clientY - y_del);
+            operCtx.stroke();
 
             let dis = Math.sqrt(
               (point[0] - e.clientX) *
@@ -136,24 +144,21 @@ function Main({ width, height }) {
             let angle = Math.atan(
               (point[1] - e.clientY) / (point[0] - e.clientX)
             ).toFixed(3);
-            ctx.save();
-            ctx.translate(
+            operCtx.save();
+            operCtx.translate(
               Math.round((point[0] + e.clientX) / 2) - x_del,
               Math.round((point[1] + e.clientY) / 2) - y_del
             );
-            ctx.rotate(angle);
-            ctx.textAlign = "center";
-            ctx.font = "1rem serif";
-            ctx.fillStyle = "#08f2e5";
-            ctx.fillText(dis.toString(), 0, 16);
-            ctx.restore();
+            operCtx.rotate(angle);
+            operCtx.textAlign = "center";
+            operCtx.font = "1rem serif";
+            operCtx.fillStyle = "#08f2e5";
+            operCtx.fillText(dis.toString(), 0, 16);
+            operCtx.restore();
           }
           setLine(line.concat([[e.clientX, e.clientY]]));
         } else if (mouseDownInfo.buttons === 2) {
-          ctx.clearRect(0, 0, cvs.width, cvs.height);
-          ctx.fillStyle = "#e2e8f0";
-          ctx.fillRect(0, 0, cvs.width, cvs.height);
-          showImgOnCanvas(getUrlFromDicomObj(dicom_list[dicomShowIndex]));
+          operCtx.clearRect(0, 0, operCvs.width, operCvs.height);
           setLine([]);
         }
       } else if (isDown) {
@@ -189,16 +194,30 @@ function Main({ width, height }) {
       className="bg-slate-400 dark:bg-slate-700 flex justify-center items-center"
       style={{ width, height }}
     >
-      <canvas
-        id="canvas"
-        width={mainWidth}
-        height={mainHeight}
-        onWheel={(e) => zoomCanvas(e)}
-        onMouseMove={mouseMove}
-        onMouseDown={mouseDown}
-        onMouseUp={mouseUp}
-        onContextMenu={contextMenu}
-      ></canvas>
+      <div className="relative flow-root">
+        <div
+          className="z-0"
+          style={{ width: mainWidth, height: mainHeight }}
+        ></div>
+        <canvas
+          id="imgCanvas"
+          className="absolute top-0 left-0 z-10"
+          width={mainWidth}
+          height={mainHeight}
+          onContextMenu={contextMenu}
+        ></canvas>
+        <canvas
+          id="operCanvas"
+          width={mainWidth}
+          height={mainHeight}
+          className="absolute top-0 left-0 z-20"
+          // onWheel={(e) => zoomCanvas(e)}
+          onMouseMove={mouseMove}
+          onMouseDown={mouseDown}
+          onMouseUp={mouseUp}
+          onContextMenu={contextMenu}
+        ></canvas>
+      </div>
     </div>
   );
 }
