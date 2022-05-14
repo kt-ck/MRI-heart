@@ -54,4 +54,64 @@ router.post("/uploadDicom", upload.any("files[]"), function (req, res, next) {
   });
 });
 
+router.get("/getExistProject", function (req, res, next) {
+  const dirname = path.resolve(__dirname + "/../uploads");
+  fs.readdir(dirname, function (err, dirs) {
+    if (err) {
+      res.sendStatus(500);
+    }
+    // console.log(files);
+    const project = {};
+    let cnt = 0;
+    dirs.forEach((item) => {
+      fs.readdir(path.resolve(dirname + `/${item}`), function (err, files) {
+        if (err) {
+          return;
+        }
+        project[item] = files;
+        cnt += 1;
+        if (cnt === dirs.length) {
+          res.send(project);
+        }
+      });
+    });
+  });
+});
+
+router.post("/openProject", function (req, res, next) {
+  let projectName = req.body.name;
+  fs.readdir(
+    path.resolve(__dirname + `/../uploads/${projectName}`),
+    function (err, filelist) {
+      if (err) {
+        return;
+      }
+      fs.readdir(
+        path.resolve(__dirname + `/../json/${projectName}`),
+        function (err, files) {
+          if (err) {
+            res.send("文件打开失败");
+          }
+          let file = path.resolve(
+            __dirname + `/../json/${projectName}/${files[0]}`
+          );
+          fs.readFile(file, "utf-8", (err, data) => {
+            if (err) {
+              res.send("文件读取失败");
+            }
+
+            res.send({
+              dirname: projectName,
+              filelist: filelist.map((item) => {
+                return { filename: item };
+              }),
+              firstData: data,
+            });
+          });
+        }
+      );
+    }
+  );
+});
+
 module.exports = router;

@@ -6,11 +6,11 @@ function ToolBox({ width }) {
   const Row2Menu = [
     {
       id: "explore",
-      label: "文件管理",
+      label: "当前项目",
     },
     {
-      id: "test",
-      label: "测试",
+      id: "projectName",
+      label: "项目管理",
     },
   ];
   return (
