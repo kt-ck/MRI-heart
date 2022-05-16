@@ -114,4 +114,22 @@ router.post("/openProject", function (req, res, next) {
   );
 });
 
+router.post("/getDicomJson", (req, res, next) => {
+  const projectName = req.body.projectName;
+  const dicomName = req.body.dicomName["filename"];
+
+  let filePath = path.resolve(
+    __dirname + `/../json/${projectName}/${dicomName.split(".")[0]}.json`
+  );
+
+  fs.readFile(filePath, "utf-8", (err, data) => {
+    if (err) {
+      res.send("文件打开失败");
+    }
+    res.send({
+      data,
+    });
+  });
+});
+
 module.exports = router;

@@ -1,6 +1,8 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setToolboxActiveIndex } from "../features/toolbox/currentFileSysSlice";
+import { setDicomInfo } from "../features/global/globalSlice";
 function Main({ width, height }) {
   // useSelector
   const dicomInfo = useSelector((state) => state.global.dicomInfo);
@@ -9,6 +11,7 @@ function Main({ width, height }) {
   const menuHeight = useSelector((state) => state.global.menuHeight);
   const sidebarWidth = useSelector((state) => state.global.sidebarWidth);
   const host = useSelector((state) => state.global.host);
+  const api = useSelector((state) => state.global.api);
   const projectname = useSelector((state) => state.global.projectname);
   const toolboxActiveIndex = useSelector(
     (state) => state.currentFileSys.toolboxActiveIndex
@@ -91,6 +94,21 @@ function Main({ width, height }) {
       setDicomShowIndex(0);
     }
   }, [mainWidth, mainHeight, dicom_list]);
+
+  useEffect(() => {
+    //更新dicomInfo
+    axios
+      .post(api + "getDicomJson", {
+        projectName: projectname,
+        dicomName: dicom_list[dicomShowIndex],
+      })
+      .then((res) => {
+        // console.log(res.data.data);
+        let currentData = JSON.parse(JSON.parse(res.data.data));
+        dispatch(setDicomInfo(currentData));
+      })
+      .catch((err) => console.log(err));
+  }, [dicomShowIndex, dicom_list]);
 
   // canvas listener handler
   const contextMenu = (e) => {
