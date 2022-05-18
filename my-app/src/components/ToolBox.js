@@ -2,19 +2,22 @@ import { useState } from "react";
 import Tab from "./Tab";
 import ToolBoxRow2Main from "./ToolBoxRow2Main";
 import ToolBoxRow1Main from "./ToolBoxRow1Main";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setRow1MenuIndex } from "../features/toolbox/currentFileSysSlice";
 function ToolBox({ width }) {
   const [Row2MenuIndex, setRow2MenuIndex] = useState(0);
-  const [Row1MenuIndex, setRow1MenuIndex] = useState(0);
-
+  const Row1MenuIndex = useSelector(
+    (state) => state.currentFileSys.Row1MenuIndex
+  );
+  const dispatch = useDispatch();
   const Row1Menu = [
     {
       id: "currentInfo",
       label: "属性",
     },
     {
-      id: "more",
-      label: "测试",
+      id: "show",
+      label: "显示",
     },
   ];
   const Row2Menu = [
@@ -37,7 +40,7 @@ function ToolBox({ width }) {
         <Tab
           list={Row1Menu}
           activeIndex={Row1MenuIndex}
-          setactiveIndex={setRow1MenuIndex}
+          setactiveIndex={(index) => dispatch(setRow1MenuIndex(index))}
         />
 
         <ToolBoxRow1Main activeIndex={Row1MenuIndex} />

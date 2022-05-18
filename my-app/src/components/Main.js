@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setToolboxActiveIndex } from "../features/toolbox/currentFileSysSlice";
 import { setDicomInfo } from "../features/global/globalSlice";
+import { fabric } from "fabric";
+import {
+  setRow1MenuIndex,
+  setShowObj,
+} from "../features/toolbox/currentFileSysSlice";
 function Main({ width, height }) {
   // useSelector
   const dicomInfo = useSelector((state) => state.global.dicomInfo);
@@ -24,10 +29,13 @@ function Main({ width, height }) {
   const [operCvs, setOperCvs] = useState({});
   const [imgCtx, setImgCtx] = useState({});
   const [imgCvs, setImgCvs] = useState({});
+  const [fabricCvs, setFabricCvs] = useState("");
   const [mouseDownInfo, setMouseDownInfo] = useState({});
   const [isDown, setIsDown] = useState(false);
   const [line, setLine] = useState([]);
   const [dicomShowIndex, setDicomShowIndex] = useState(0);
+
+  const [coverCircle, setCoverCircle] = useState("");
 
   //const data
   const x_del = Math.round((width - mainWidth) / 2) + sidebarWidth;
@@ -70,6 +78,23 @@ function Main({ width, height }) {
     operCtx.clearRect(0, 0, operCvs.width, operCvs.height);
   };
 
+  const fabricCanvasMouseMove = (event) => {
+    let obj = {
+      scaleX: coverCircle.get("scaleX"),
+      scaleY: coverCircle.get("scaleY"),
+      x: coverCircle.get("left"),
+      y: coverCircle.get("top"),
+      radius: coverCircle.get("radius"),
+      dicom_img: getUrlFromDicomObj(dicom_list[dicomShowIndex]),
+      height: dicomInfo["height"],
+      width: dicomInfo["width"],
+    };
+    dispatch(setShowObj(obj));
+    // console.log(obj);
+
+    // console.log(coverCircle.get("scaleX"), coverCircle.get("scaleY"));
+  };
+
   // useEffect
   useEffect(() => {
     //初始化operCvs、operCtx, imgCvs, imgCtx
@@ -94,6 +119,39 @@ function Main({ width, height }) {
       setDicomShowIndex(0);
     }
   }, [mainWidth, mainHeight, dicom_list]);
+
+  useEffect(() => {
+    if (activeIndex === 1 && dicom_list.length !== 0 && !fabricCvs) {
+      setFabricCvs(new fabric.Canvas("fabricCanvas"), {
+        width: mainWidth,
+        height: mainHeight,
+      });
+    }
+
+    if (activeIndex === 1) {
+      dispatch(setRow1MenuIndex(1));
+    }
+  }, [activeIndex, dicom_list]);
+
+  useEffect(() => {
+    if (fabricCvs && dicom_list.length !== 0 && !coverCircle) {
+      let circle = new fabric.Circle({
+        radius: 20,
+        top: 10,
+        left: 10,
+        fill: "#08f2e5",
+        opacity: 0.3,
+      });
+      setCoverCircle(circle);
+    }
+  }, [fabricCvs]);
+
+  useEffect(() => {
+    if (coverCircle) {
+      fabricCvs.add(coverCircle);
+      fabricCvs.on("mouse:move", fabricCanvasMouseMove);
+    }
+  }, [coverCircle]);
 
   useEffect(() => {
     //更新dicomInfo
@@ -224,17 +282,32 @@ function Main({ width, height }) {
           height={mainHeight}
           onContextMenu={contextMenu}
         ></canvas>
+
         <canvas
           id="operCanvas"
           width={mainWidth}
           height={mainHeight}
-          className="absolute top-0 left-0 z-20"
+          className={`absolute top-0 left-0 ${
+            activeIndex === 0 ? "z-30" : "z-20"
+          }`}
           // onWheel={(e) => zoomCanvas(e)}
           onMouseMove={mouseMove}
           onMouseDown={mouseDown}
           onMouseUp={mouseUp}
           onContextMenu={contextMenu}
         ></canvas>
+
+        <div
+          className={`absolute top-0 left-0 ${
+            activeIndex === 1 ? "z-30" : "z-20"
+          }`}
+        >
+          <canvas
+            id="fabricCanvas"
+            width={mainWidth}
+            height={mainHeight}
+          ></canvas>
+        </div>
       </div>
     </div>
   );
