@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import { fabric } from "fabric";
 import { useSelector, useDispatch } from "react-redux";
 import { setShowObj } from "../features/toolbox/currentFileSysSlice";
-function FabricCanvas({
-  mainWidth,
-  mainHeight,
-  getUrlFromDicomObj,
-  dicomShowIndex,
-}) {
+function FabricCanvas({ mainWidth, mainHeight, getUrlFromDicomObj }) {
   const dicomInfo = useSelector((state) => state.global.dicomInfo);
   const dicom_list = useSelector((state) => state.global.dicomlist);
   const activeIndex = useSelector((state) => state.global.activeIndex);
@@ -22,10 +17,11 @@ function FabricCanvas({
       x: circle.get("left"),
       y: circle.get("top"),
       radius: circle.get("radius"),
-      dicom_img: getUrlFromDicomObj(dicom_list[dicomShowIndex]),
+      //   dicom_img: getUrlFromDicomObj(dicom_list[dicomShowIndex]),
       height: dicomInfo["height"],
       width: dicomInfo["width"],
     };
+    // console.log(dicomShowIndex);
     dispatch(setShowObj(obj));
   };
   useEffect(() => {
@@ -45,6 +41,7 @@ function FabricCanvas({
           left: 10,
           fill: "#08f2e5",
           opacity: 0.3,
+          cornerSize: 6,
         })
       );
     }
@@ -57,7 +54,9 @@ function FabricCanvas({
     }
   }, [circle]);
   return (
-    <canvas id="fabricCanvas" width={mainWidth} height={mainHeight}></canvas>
+    <>
+      <canvas id="fabricCanvas" width={mainWidth} height={mainHeight}></canvas>
+    </>
   );
 }
 

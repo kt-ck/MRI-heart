@@ -27,6 +27,9 @@ export const globalSlice = createSlice({
 
     // 当前打开的工程中所有的dicom文件名
     dicomlist: [],
+
+    //当前工程中正在显示的dicom文件在列表中的下标
+    dicomShowIndex: 0,
   },
   reducers: {
     setDicomInfo: (state, action) => {
@@ -42,11 +45,19 @@ export const globalSlice = createSlice({
     setDicomlist: (state, action) => {
       state.dicomlist = action.payload;
     },
+    setDicomShowIndex: (state, action) => {
+      state.dicomShowIndex = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setDicomInfo, setActiveIndex, setProjectName, setDicomlist } =
-  globalSlice.actions;
+export const {
+  setDicomInfo,
+  setActiveIndex,
+  setProjectName,
+  setDicomlist,
+  setDicomShowIndex,
+} = globalSlice.actions;
 
 export default globalSlice.reducer;

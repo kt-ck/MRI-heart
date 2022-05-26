@@ -4,7 +4,10 @@ import List from "./List";
 function ToolBoxRow1Main({ activeIndex }) {
   const dicom_info = useSelector((state) => state.global.dicomInfo);
   const show_info = useSelector((state) => state.currentFileSys.showObj);
-
+  const dicom_list = useSelector((state) => state.global.dicomlist);
+  const dicomShowIndex = useSelector((state) => state.global.dicomShowIndex);
+  const host = useSelector((state) => state.global.host);
+  const projectname = useSelector((state) => state.global.projectname);
   if (activeIndex === 0) {
     return <List listdata={dicom_info} />;
   } else if (activeIndex === 1) {
@@ -17,23 +20,44 @@ function ToolBoxRow1Main({ activeIndex }) {
         show_info["y"] +
         show_info["radius"] * show_info["scaleY"]
       ).toFixed();
-
       let width = (show_info["radius"] * show_info["scaleX"]).toFixed();
       let height = (show_info["radius"] * show_info["scaleY"]).toFixed();
+      let area =
+        show_info["radius"] *
+        show_info["scaleX"] *
+        show_info["radius"] *
+        show_info["scaleY"] *
+        Math.PI *
+        dicom_info.PhysicalDelta[0] *
+        dicom_info.PhysicalDelta[1];
       return (
-        <div className="w-full h-full overflow-auto">
-          <svg width={500} height={500} xmlns="http://www.w3.org/2000/svg">
-            <clipPath id="ellipse">
-              <ellipse cx={centerX} cy={centerY} rx={width} ry={height} />
-            </clipPath>
-
-            <image
+        <div className="w-full h-full overflow-auto flex flex-col justify-center items-center">
+          <div className="w-72 h-72 overflow-hidden relative">
+            <svg
               width={show_info["width"]}
               height={show_info["height"]}
-              href={show_info["dicom_img"]}
-              style={{ clipPath: "url(#ellipse)" }}
-            />
-          </svg>
+              xmlns="http://www.w3.org/2000/svg"
+              className="absolute"
+              style={{
+                left: `${(150 - centerX).toFixed()}px`,
+                top: `${(150 - centerY).toFixed()}px`,
+              }}
+            >
+              <clipPath id="ellipse">
+                <ellipse cx={centerX} cy={centerY} rx={width} ry={height} />
+              </clipPath>
+
+              <image
+                width={show_info["width"]}
+                height={show_info["height"]}
+                href={`${host}images/dicom_img/${projectname}/${
+                  dicom_list[dicomShowIndex]["filename"].split(".")[0]
+                }.png`}
+                style={{ clipPath: "url(#ellipse)" }}
+              />
+            </svg>
+          </div>
+          <div>S = {area.toFixed(4)}</div>
         </div>
       );
     } else {

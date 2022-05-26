@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setToolboxActiveIndex } from "../features/toolbox/currentFileSysSlice";
 import { setDicomInfo } from "../features/global/globalSlice";
-import {
-  setRow1MenuIndex,
-  setShowObj,
-} from "../features/toolbox/currentFileSysSlice";
+import { setRow1MenuIndex } from "../features/toolbox/currentFileSysSlice";
+import { setDicomShowIndex } from "../features/global/globalSlice";
 import FabricCanvas from "./FabricCanvas";
 
 function Main({ width, height }) {
@@ -22,7 +20,7 @@ function Main({ width, height }) {
   const toolboxActiveIndex = useSelector(
     (state) => state.currentFileSys.toolboxActiveIndex
   );
-
+  const dicomShowIndex = useSelector((state) => state.global.dicomShowIndex);
   //useState
   const [mainWidth, setMainWidth] = useState(500);
   const [mainHeight, setMainHeight] = useState(500);
@@ -33,9 +31,6 @@ function Main({ width, height }) {
   const [mouseDownInfo, setMouseDownInfo] = useState({});
   const [isDown, setIsDown] = useState(false);
   const [line, setLine] = useState([]);
-  const [dicomShowIndex, setDicomShowIndex] = useState(0);
-
-  const [coverCircle, setCoverCircle] = useState("");
 
   //const data
   const x_del = Math.round((width - mainWidth) / 2) + sidebarWidth;
@@ -90,7 +85,7 @@ function Main({ width, height }) {
       setOperCanvasEmpty();
       showImgOnCanvas(getUrlFromDicomObj(dicom_list[0]));
       dispatch(setToolboxActiveIndex(0));
-      setDicomShowIndex(0);
+      dispatch(setDicomShowIndex(0));
     }
   }, [mainWidth, mainHeight, dicom_list]);
 
@@ -195,7 +190,7 @@ function Main({ width, height }) {
                 getUrlFromDicomObj(dicom_list[dicomShowIndex + 1])
               );
               dispatch(setToolboxActiveIndex(toolboxActiveIndex + 1));
-              setDicomShowIndex(dicomShowIndex + 1);
+              dispatch(setDicomShowIndex(dicomShowIndex + 1));
             }
           } else if (e.clientX < mouseDownInfo.clientX) {
             if (dicomShowIndex - 1 >= 0) {
@@ -203,7 +198,7 @@ function Main({ width, height }) {
                 getUrlFromDicomObj(dicom_list[dicomShowIndex - 1])
               );
               dispatch(setToolboxActiveIndex(toolboxActiveIndex - 1));
-              setDicomShowIndex(dicomShowIndex - 1);
+              dispatch(setDicomShowIndex(dicomShowIndex - 1));
             }
           }
         }
@@ -253,7 +248,6 @@ function Main({ width, height }) {
             mainWidth={mainWidth}
             mainHeight={mainHeight}
             getUrlFromDicomObj={getUrlFromDicomObj}
-            dicomShowIndex={dicomShowIndex}
           />
         </div>
       </div>
