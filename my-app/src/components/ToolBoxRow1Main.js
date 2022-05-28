@@ -57,7 +57,9 @@ function ToolBoxRow1Main({ activeIndex }) {
               />
             </svg>
           </div>
-          <div>S = {area.toFixed(4)}</div>
+          <div className="text-slate-600 dark:text-slate-200">
+            S = {area.toFixed(4)}
+          </div>
         </div>
       );
     } else {

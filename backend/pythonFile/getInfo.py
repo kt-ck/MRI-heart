@@ -30,7 +30,9 @@ for dicom_full in os.listdir(project_dir):
         "height": height,
         "width": width,
         "filename": dicom,
-        "PhysicalDelta": list(ds[0x0028, 0x0030].value)
+        "PhysicalDelta": list(ds[0x0028, 0x0030].value),
+        "SpacingBetweenSlices": ds["SpacingBetweenSlices"].value,
+        "SliceLocation": ds["SliceLocation"].value
     }
 
     data_string = json.dumps(data)

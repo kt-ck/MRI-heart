@@ -17,19 +17,39 @@ function FabricCanvas({ mainWidth, mainHeight, getUrlFromDicomObj }) {
       x: circle.get("left"),
       y: circle.get("top"),
       radius: circle.get("radius"),
-      //   dicom_img: getUrlFromDicomObj(dicom_list[dicomShowIndex]),
       height: dicomInfo["height"],
       width: dicomInfo["width"],
     };
     // console.log(dicomShowIndex);
     dispatch(setShowObj(obj));
   };
+
+  const fabricCanvasMouseDoubleClick = (e) => {
+    if (circle) {
+      cvs.remove(circle);
+      setCircle("");
+    }
+  };
+
   useEffect(() => {
-    if (activeIndex === 1 && dicom_list.length !== 0 && !cvs) {
-      setCvs(new fabric.Canvas("fabricCanvas"), {
-        width: mainWidth,
-        height: mainHeight,
-      });
+    if (activeIndex === 1 && dicom_list.length !== 0) {
+      if (!cvs) {
+        setCvs(new fabric.Canvas("fabricCanvas"), {
+          width: mainWidth,
+          height: mainHeight,
+        });
+      } else {
+        setCircle(
+          new fabric.Circle({
+            radius: 20,
+            top: 10,
+            left: 10,
+            fill: "#08f2e5",
+            opacity: 0.3,
+            cornerSize: 6,
+          })
+        );
+      }
     }
   }, [activeIndex]);
   useEffect(() => {
@@ -51,6 +71,7 @@ function FabricCanvas({ mainWidth, mainHeight, getUrlFromDicomObj }) {
     if (circle && activeIndex === 1 && dicom_list.length !== 0) {
       cvs.add(circle);
       cvs.on("mouse:move", fabricCanvasMouseMove);
+      cvs.on("mouse:dblclick", fabricCanvasMouseDoubleClick);
     }
   }, [circle]);
   return (
