@@ -1,28 +1,37 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 export const menuSlice = createSlice({
-  name: 'menu',
+  name: "menu",
   initialState: {
-    menuList : [{
+    menuList: [
+      {
         id: "File",
-        label: 'File',
-        subLabel: [{
-          id: 'open file',
-          label: '打开DICOM文件',
-          callback: "uploadDicomFile"
-        }]
-      },{
-        id: 'Edit',
-        label: 'Edit',
-        subLabel: []
-      }]
+        label: "File",
+        subLabel: [
+          {
+            id: "open file",
+            label: "打开DICOM文件",
+            callback: "uploadDicomFile",
+          },
+        ],
+      },
+      {
+        id: "Edit",
+        label: "Edit",
+        subLabel: [
+          {
+            id: "calculate V",
+            label: "体积计算",
+            callback: "calV",
+          },
+        ],
+      },
+    ],
   },
-  reducers: {
-
-  },
-})
+  reducers: {},
+});
 
 // Action creators are generated for each case reducer function
 // export const { change } = modeSlice.actions
 
-export default menuSlice.reducer
+export default menuSlice.reducer;

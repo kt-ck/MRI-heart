@@ -19,6 +19,14 @@ function ToolBox({ width }) {
       id: "show",
       label: "显示",
     },
+    {
+      id: "input",
+      label: "参数输入",
+    },
+    {
+      id: "output",
+      label: "参数输出",
+    },
   ];
   const Row2Menu = [
     {

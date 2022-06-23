@@ -30,6 +30,9 @@ export const globalSlice = createSlice({
 
     //当前工程中正在显示的dicom文件在列表中的下标
     dicomShowIndex: 0,
+
+    //是否正在计算EDV
+    isCalculateEDV: false,
   },
   reducers: {
     setDicomInfo: (state, action) => {
@@ -48,6 +51,9 @@ export const globalSlice = createSlice({
     setDicomShowIndex: (state, action) => {
       state.dicomShowIndex = action.payload;
     },
+    setIsCalculateEDV: (state, action) => {
+      state.isCalculateEDV = action.payload;
+    },
   },
 });
 
@@ -58,6 +64,7 @@ export const {
   setProjectName,
   setDicomlist,
   setDicomShowIndex,
+  setIsCalculateEDV,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

@@ -5,6 +5,7 @@ import {
   setProjectName,
   setDicomlist,
   setDicomInfo,
+  setIsCalculateEDV,
 } from "../features/global/globalSlice";
 function DropDownItem({ item }) {
   const api = useSelector((state) => state.global.api);
@@ -41,6 +42,12 @@ function DropDownItem({ item }) {
       });
   };
 
+  const btnClick = (e) => {
+    if (item.id === "calculate V") {
+      dispatch(setIsCalculateEDV(true));
+    }
+  };
+
   if (item.id === "open file") {
     return (
       <div className="relative">
@@ -57,7 +64,11 @@ function DropDownItem({ item }) {
       </div>
     );
   }
-  return <Button type="text">{item.label}</Button>;
+  return (
+    <Button type="text" onClick={btnClick}>
+      {item.label}
+    </Button>
+  );
 }
 
 export default DropDownItem;

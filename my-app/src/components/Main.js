@@ -159,7 +159,7 @@ function Main({ width, height }) {
                   dicomInfo.PhysicalDelta[1] *
                   dicomInfo.PhysicalDelta[1]
             );
-            dis = dis.toFixed(3);
+            dis = (dis / 10).toFixed(3);
             let angle = Math.atan(
               (point[1] - e.clientY) / (point[0] - e.clientX)
             ).toFixed(3);
@@ -172,7 +172,7 @@ function Main({ width, height }) {
             operCtx.textAlign = "center";
             operCtx.font = "1rem serif";
             operCtx.fillStyle = "#08f2e5";
-            operCtx.fillText(dis.toString(), 0, 16);
+            operCtx.fillText(dis.toString() + "cm", 0, 16);
             operCtx.restore();
           }
           setLine(line.concat([[e.clientX, e.clientY]]));
