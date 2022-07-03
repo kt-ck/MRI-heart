@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { DownSquareOutlined, RightSquareOutlined } from "@ant-design/icons";
-function Tree({ projectName, filenameList, activeIndex }) {
+import { Button } from "antd";
+function Tree({
+  projectName,
+  filenameList,
+  activeIndex,
+  isButton,
+  setClickIndex,
+}) {
   const [show, setShow] = useState(false);
   return (
     <div className="w-full dark:text-slate-100 px-2 flow-root">
@@ -19,7 +26,18 @@ function Tree({ projectName, filenameList, activeIndex }) {
               }
               key={item.filename}
             >
-              {item.filename}
+              {isButton ? (
+                <Button
+                  type="text"
+                  onClick={() => {
+                    setClickIndex(index);
+                  }}
+                >
+                  {item.filename}
+                </Button>
+              ) : (
+                item.filename
+              )}
             </div>
           ))}
       </div>

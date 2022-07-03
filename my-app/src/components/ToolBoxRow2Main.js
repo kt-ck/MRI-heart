@@ -7,15 +7,14 @@ import {
   setProjectName,
   setDicomlist,
   setDicomInfo,
+  setDicomShowIndex,
 } from "../features/global/globalSlice";
 
 function ToolBoxRow2Main({ activeIndex }) {
   const projectname = useSelector((state) => state.global.projectname);
   const filelist = useSelector((state) => state.global.dicomlist);
   const api = useSelector((state) => state.global.api);
-  const toolboxActiveIndex = useSelector(
-    (state) => state.currentFileSys.toolboxActiveIndex
-  );
+  const dicomShowIndex = useSelector((state) => state.global.dicomShowIndex);
 
   const dispatch = useDispatch();
   const [project, setProject] = useState({});
@@ -56,7 +55,11 @@ function ToolBoxRow2Main({ activeIndex }) {
           <Tree
             projectName={projectname}
             filenameList={filelist}
-            activeIndex={toolboxActiveIndex}
+            activeIndex={dicomShowIndex}
+            isButton={true}
+            setClickIndex={(index) => {
+              dispatch(setDicomShowIndex(index));
+            }}
           />
         </div>
       );
@@ -76,6 +79,7 @@ function ToolBoxRow2Main({ activeIndex }) {
                   return { filename: file };
                 })}
                 activeIndex={-1}
+                isButton={false}
               />
               <Radio
                 value={name}

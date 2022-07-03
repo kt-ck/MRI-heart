@@ -29,7 +29,7 @@ export const globalSlice = createSlice({
     dicomlist: [],
 
     //当前工程中正在显示的dicom文件在列表中的下标
-    dicomShowIndex: 0,
+    dicomShowIndex: -1,
 
     //是否正在计算EDV
     isCalculateEDV: false,

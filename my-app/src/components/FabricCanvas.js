@@ -30,7 +30,7 @@ function FabricCanvas({ mainWidth, mainHeight, getUrlFromDicomObj }) {
   const fabricCanvasMouseMove = (event) => {
     if (isDown) {
       line.push([event.e.x, event.e.y]);
-      console.log(line);
+      // console.log(line);
     }
 
     // let obj = {

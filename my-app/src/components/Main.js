@@ -111,6 +111,12 @@ function Main({ width, height }) {
       .catch((err) => console.log(err));
   }, [dicomShowIndex, dicom_list]);
 
+  useEffect(() => {
+    if (dicomShowIndex && dicomShowIndex >= 0) {
+      showImgOnCanvas(getUrlFromDicomObj(dicom_list[dicomShowIndex]));
+    }
+  }, [dicomShowIndex]);
+
   // canvas listener handler
   const contextMenu = (e) => {
     e.preventDefault();
@@ -186,18 +192,18 @@ function Main({ width, height }) {
 
           if (e.clientX > mouseDownInfo.clientX) {
             if (dicomShowIndex + 1 < dicom_list.length) {
-              showImgOnCanvas(
-                getUrlFromDicomObj(dicom_list[dicomShowIndex + 1])
-              );
-              dispatch(setToolboxActiveIndex(toolboxActiveIndex + 1));
+              // showImgOnCanvas(
+              //   getUrlFromDicomObj(dicom_list[dicomShowIndex + 1])
+              // );
+              // dispatch(setToolboxActiveIndex(toolboxActiveIndex + 1));
               dispatch(setDicomShowIndex(dicomShowIndex + 1));
             }
           } else if (e.clientX < mouseDownInfo.clientX) {
             if (dicomShowIndex - 1 >= 0) {
-              showImgOnCanvas(
-                getUrlFromDicomObj(dicom_list[dicomShowIndex - 1])
-              );
-              dispatch(setToolboxActiveIndex(toolboxActiveIndex - 1));
+              // showImgOnCanvas(
+              //   getUrlFromDicomObj(dicom_list[dicomShowIndex - 1])
+              // );
+              // dispatch(setToolboxActiveIndex(toolboxActiveIndex - 1));
               dispatch(setDicomShowIndex(dicomShowIndex - 1));
             }
           }
