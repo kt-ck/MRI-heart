@@ -13,14 +13,15 @@ export const currentFileSysSlice = createSlice({
     showObj: {},
 
     //输入框中的面积数据
-    edvText: "",
-    esvText: "",
+    aThickness: "",
+    pThickness: "",
     eddText: "",
     esdText: "",
-
+    dInnerText: "",
+    dOuterText: "",
+    sInnerText: "",
+    sOuterText: "",
     heartRate: "",
-    edevText: "",
-    esevText: "",
 
     //层宽
     sliceHeight: "",
@@ -35,11 +36,11 @@ export const currentFileSysSlice = createSlice({
     setShowObj: (state, action) => {
       state.showObj = action.payload;
     },
-    setEdvText: (state, action) => {
-      state.edvText = action.payload;
+    setAThickness: (state, action) => {
+      state.aThickness = action.payload;
     },
-    setEsvText: (state, action) => {
-      state.esvText = action.payload;
+    setPThickness: (state, action) => {
+      state.pThickness = action.payload;
     },
     setSliceHeight: (state, action) => {
       state.sliceHeight = action.payload;
@@ -53,11 +54,17 @@ export const currentFileSysSlice = createSlice({
     setHeartRate: (state, action) => {
       state.heartRate = action.payload;
     },
-    setEdevText: (state, action) => {
-      state.edevText = action.payload;
+    setDInnerText: (state, action) => {
+      state.dInnerText = action.payload;
     },
-    setEsevText: (state, action) => {
-      state.esevText = action.payload;
+    setSInnerText: (state, action) => {
+      state.sInnerText = action.payload;
+    },
+    setDOuterText: (state, action) => {
+      state.dOuterText = action.payload;
+    },
+    setSOuterText: (state, action) => {
+      state.sOuterText = action.payload;
     },
   },
 });
@@ -66,14 +73,16 @@ export const {
   setToolboxActiveIndex,
   setRow1MenuIndex,
   setShowObj,
-  setEdvText,
-  setEsvText,
   setSliceHeight,
   setEddText,
   setEsdText,
   setHeartRate,
-  setEsevText,
-  setEdevText,
+  setDInnerText,
+  setDOuterText,
+  setSInnerText,
+  setSOuterText,
+  setAThickness,
+  setPThickness,
 } = currentFileSysSlice.actions;
 
 export default currentFileSysSlice.reducer;

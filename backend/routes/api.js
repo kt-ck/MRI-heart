@@ -145,8 +145,8 @@ const calV = (area, sliceHeight) => {
   let v = [];
   for (let i = 0; i < area.length; ++i) {
     let total = 0;
-    for (let j = 0; j < area[i].length; ++j) {
-      total += area[i][j] * sliceHeight;
+    for (let j = 0; j < area[i].length - 1; ++j) {
+      total += ((area[i][j] + area[i][j + 1]) * sliceHeight) / 2;
     }
     v.push((total / 1000).toFixed(2));
   }
@@ -156,94 +156,80 @@ router.post("/getReport", (req, res, next) => {
   let report = {};
   let data = req.body;
 
-  let edvSliceArea,
-    esvSliceArea,
-    edevSliceArea,
-    esevSliceArea,
+  let dInnerSliceArea,
+    dOuterSliceArea,
+    sInnerSliceArea,
+    sOuterSliceArea,
     edd,
     esd,
     sliceHeight,
     heartRate,
     edv,
-    esv,
     edev,
-    esev;
+    esev,
+    esv;
   if (data["sliceHeight"]) {
     sliceHeight = parseFloat(data["sliceHeight"]);
   }
-  if (data["edvText"]) {
-    edvSliceArea = parseText(data.edvText);
-    edv = calV(edvSliceArea, sliceHeight);
-    report["edv"] = edv;
+  if (data["dInnerText"]) {
+    dInnerSliceArea = parseText(data.dInnerText);
+    let tedv = calV(dInnerSliceArea, sliceHeight);
+    edv = Math.max(...tedv);
+    report["End-Diastolic Volume"] = edv + " ml";
   }
-  if (data["esvText"]) {
-    esvSliceArea = parseText(data.esvText);
-    esv = calV(esvSliceArea, sliceHeight);
-    report["esv"] = esv;
-    console.log(data);
+  if (data["dOuterText"]) {
+    dOuterSliceArea = parseText(data.dOuterText);
+    let tedev = calV(dOuterSliceArea, sliceHeight);
+    edev = Math.max(...tedev);
+    report["End-Diastolic Epicardial Volume"] = edev + " ml";
   }
-  if (data["edevText"]) {
-    edevSliceArea = parseText(data["edevText"]);
-    edev = calV(edevSliceArea, sliceHeight);
-    report["edev"] = edev;
+  if (data["sInnerText"]) {
+    sInnerSliceArea = parseText(data.sInnerText);
+    let tesv = calV(sInnerSliceArea, sliceHeight);
+    esv = Math.min(...tesv);
+    report["End-Systolic Volume"] = esv + " ml";
   }
-  if (data["esevText"]) {
-    esevSliceArea = parseText(data["esevText"]);
-    esev = calV(esevSliceArea, sliceHeight);
-    report["esev"] = esev;
+  if (data["sOuterText"]) {
+    sOuterSliceArea = parseText(data.sOuterText);
+    let tesev = calV(sOuterSliceArea, sliceHeight);
+    esev = Math.min(tesev);
+    report["End-Systolic Epicardial Volume"] = esev + " ml";
   }
+
   if (data["eddText"]) {
     edd = data["eddText"].split(",").map(Number);
+    report["End-Diastolic Dimension"] = edd + " cm";
   }
   if (data["esdText"]) {
     esd = data["esdText"].split(",").map(Number);
+    report["End-Systolic Dimension"] = esd + " cm";
   }
   if (data["heartRate"]) {
     heartRate = parseFloat(data["heartRate"]);
+    report["heartRate"] = heartRate + " bpm";
   }
 
-  let EF = [];
-  let strokeVolumn = [];
-  let CO = [];
-  if (edv && esv && edv.length === esv.length) {
-    for (let i = 0; i < edv.length; ++i) {
-      EF.push((((edv[i] - esv[i]) / edv[i]) * 100).toFixed(2));
-      strokeVolumn.push((edv[i] - esv[i]).toFixed(2));
-      if (heartRate) {
-        CO.push(strokeVolumn[i] * heartRate);
-      }
-    }
-    report["EF"] = EF;
-    report["strokeVolumn"] = strokeVolumn;
+  if (edv && esv) {
+    report["Ejection Fraction"] = (((edv - esv) / edv) * 100).toFixed(2) + "%";
+    report["strokeVolumn"] = (edv - esv).toFixed(2);
     if (heartRate) {
-      report["CO"] = CO;
+      report["Cardiac Output"] =
+        ((report["strokeVolumn"] * heartRate) / 1000).toFixed(2) + " l/bpm";
     }
+    report["strokeVolumn"] += " ml";
   }
 
-  let FS = [];
-
-  if (edd && esd && edd.length === esd.length) {
-    for (let i = 0; i < edd.length; ++i) {
-      FS.push((((edd[i] - esd[i]) / edd[i]) * 100).toFixed(2));
-    }
-    report["FS"] = FS;
+  if (edd && esd) {
+    report["Fraction Shortening"] =
+      (((edd - esd) / edd) * 100).toFixed(2) + "%";
   }
 
-  let MED = [];
-  let MES = [];
-
-  if (edev && edv && edev.length === edv.length) {
-    for (let i = 0; i < edev.length; ++i) {
-      MED.push(((edev[i] - edv[i]) * 1.05).toFixed(2));
-    }
-    report["MED"] = MED;
+  if (edev && edv) {
+    report["Mass ED"] = ((edev - edv) * 1.05).toFixed(2) + " g";
   }
 
-  if (esev && esv && esev.length === esv.length) {
-    for (let i = 0; i < edev.length; ++i) {
-      MES.push(((esev[i] - edv[i]) * 1.05).toFixed(2));
-    }
-    report["MES"] = MES;
+  if (esev && esv) {
+    report["Mass ES"] = ((esev - edv) * 1.05).toFixed(2) + " g";
   }
 
   res.send(report);

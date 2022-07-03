@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import List from "./List";
 import {
-  setEdvText,
-  setEsvText,
   setSliceHeight,
   setEddText,
   setEsdText,
-  setEdevText,
-  setEsevText,
   setHeartRate,
+  setDInnerText,
+  setSInnerText,
+  setDOuterText,
+  setSOuterText,
+  setAThickness,
+  setPThickness,
 } from "../features/toolbox/currentFileSysSlice";
 import axios from "axios";
 import { Button, Input } from "antd";
@@ -18,14 +20,16 @@ function ToolBoxRow1Main({ activeIndex }) {
   const dispatch = useDispatch();
   const dicom_info = useSelector((state) => state.global.dicomInfo);
   const show_info = useSelector((state) => state.currentFileSys.showObj);
-  const edvText = useSelector((state) => state.currentFileSys.edvText);
-  const esvText = useSelector((state) => state.currentFileSys.esvText);
   const eddText = useSelector((state) => state.currentFileSys.eddText);
   const esdText = useSelector((state) => state.currentFileSys.esdText);
   const heartRate = useSelector((state) => state.currentFileSys.heartRate);
-  const esevText = useSelector((state) => state.currentFileSys.esevText);
-  const edevText = useSelector((state) => state.currentFileSys.edevText);
   const sliceHeight = useSelector((state) => state.currentFileSys.sliceHeight);
+  const aThickness = useSelector((state) => state.currentFileSys.aThickness);
+  const pThickness = useSelector((state) => state.currentFileSys.pThickness);
+  const dInnerText = useSelector((state) => state.currentFileSys.dInnerText);
+  const sInnerText = useSelector((state) => state.currentFileSys.sInnerText);
+  const dOuterText = useSelector((state) => state.currentFileSys.dOuterText);
+  const sOuterText = useSelector((state) => state.currentFileSys.sOuterText);
   const host = useSelector((state) => state.global.host);
   const api = useSelector((state) => state.global.api);
   const projectname = useSelector((state) => state.global.projectname);
@@ -34,14 +38,14 @@ function ToolBoxRow1Main({ activeIndex }) {
   const upload = (e) => {
     axios
       .post(api + "getReport", {
-        edvText,
-        esvText,
         eddText,
         esdText,
-        esevText,
-        edevText,
         sliceHeight,
         heartRate,
+        dInnerText,
+        sInnerText,
+        dOuterText,
+        sOuterText,
       })
       .then((res) => {
         setOutputData(res.data);
@@ -67,43 +71,49 @@ function ToolBoxRow1Main({ activeIndex }) {
     return (
       <div className="overflow-y-auto flex flex-col items-center">
         <Input
+          value={aThickness}
+          placeholder="Ant.Sep.Wall Thickness(cm)"
+          onChange={(e) => dispatch(setAThickness(e.target.value))}
+        />
+        <Input
+          value={pThickness}
+          placeholder="Post.Lat.Wall Thickness(cm)"
+          onChange={(e) => dispatch(setPThickness(e.target.value))}
+        />
+        <Input
           value={eddText}
-          placeholder="[EDD]数据用英文逗号隔开"
+          placeholder="End-Diastolic Dimension(cm)"
           onChange={(e) => dispatch(setEddText(e.target.value))}
         />
         <Input
           value={esdText}
-          placeholder="[ESD]数据用英文逗号隔开"
+          placeholder="End-Systolic Dimension(cm)"
           onChange={(e) => dispatch(setEsdText(e.target.value))}
         />
         <Input
           value={heartRate}
-          placeholder="[HR]心率"
+          placeholder="Heart-Rate(bpm)"
           onChange={(e) => dispatch(setHeartRate(e.target.value))}
         />
         <TextArea
-          value={edevText}
-          onChange={(e) => dispatch(setEdevText(e.target.value))}
-          placeholder="[EDEV]心脏的每层数据用英文逗号隔开,每个心脏用分号隔开。"
-          autoSize={{ minRows: 2 }}
+          value={dInnerText}
+          onChange={(e) => dispatch(setDInnerText(e.target.value))}
+          placeholder="舒张期心室内部各层数据"
         />
         <TextArea
-          value={esevText}
-          onChange={(e) => dispatch(setEsevText(e.target.value))}
-          placeholder="[ESEV]心脏的每层数据用英文逗号隔开,每个心脏用分号隔开。"
-          autoSize={{ minRows: 2 }}
+          value={dOuterText}
+          onChange={(e) => dispatch(setDOuterText(e.target.value))}
+          placeholder="舒张期心室外部各层数据"
         />
         <TextArea
-          value={edvText}
-          onChange={(e) => dispatch(setEdvText(e.target.value))}
-          placeholder="[EDV]心脏的每层数据用英文逗号隔开,每个心脏用分号隔开。"
-          autoSize={{ minRows: 2 }}
+          value={sInnerText}
+          onChange={(e) => dispatch(setSInnerText(e.target.value))}
+          placeholder="收缩期心室内部各层数据"
         />
         <TextArea
-          value={esvText}
-          onChange={(e) => dispatch(setEsvText(e.target.value))}
-          placeholder="[ESV]心脏的每层数据用英文逗号隔开,每个心脏用分号隔开。"
-          autoSize={{ minRows: 2 }}
+          value={sOuterText}
+          onChange={(e) => dispatch(setSOuterText(e.target.value))}
+          placeholder="收缩期心室外部各层数据"
         />
         <Input
           value={sliceHeight}
